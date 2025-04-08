@@ -6,7 +6,7 @@
 #define MAX 100
 
 typedef struct {
-    int data[MAX];
+    char data[MAX];
     int top;
 } Stack;
 
@@ -21,18 +21,18 @@ int isEmpty(Stack *s) {
 }
 
 // 스택에 요소 추가
-void push(Stack *s, int value) {
+void push(Stack *s, char value) {
     s->data[++(s->top)] = value;
 }
 
 // 스택에서 요소 제거
-int pop(Stack *s) {
+char pop(Stack *s) {
     if (isEmpty(s)) return '\0';
     return s->data[(s->top)--];
 }
 
 // 스택 최상단 요소 반환
-int peek(Stack *s) {
+char peek(Stack *s) {
     if (isEmpty(s)) return '\0';
     return s->data[s->top];
 }
@@ -45,15 +45,22 @@ int precedence(char op) {
 }
 
 // 중위표기식을 후위표기식으로 변환
-void infixToPostfix(char *infix, char *postfix) {
+int infixToPostfix(char *infix, char *postfix) {
     Stack s;
+    Stack s2;
     initStack(&s);
+    initStack(&s2);
     int j = 0;
 
     for (int i = 0; infix[i] != '\0'; i++) {
         char ch = infix[i];
 
         // 1. 피연산자 (알파벳 또는 숫자)
+
+        if (ch == ' ') {
+            continue;
+        }
+
         if (isalpha(ch) || isdigit(ch)) {
             postfix[j++] = ch;
         }
@@ -83,17 +90,11 @@ void infixToPostfix(char *infix, char *postfix) {
     }
     postfix[j] = '\0';
 
-    printf("후위표기식: %s\n", postfix);
-}
-
-int evaluatePostfix(char *postfix) {
-    Stack s;
-    initStack(&s);  // 계산용 스택 초기화
-
     for (int i = 0; postfix[i] != '\0'; i++) {
         char ch = postfix[i];
 
-        // 1. 피연산자 (숫자)
+        // 한자릿수 이상의 연산이 제대로 되지 않음
+
         if (isdigit(ch)) {
             // 문자열로 된 숫자를 정수로 변환하여 push
             push(&s, ch - '0');
@@ -112,7 +113,6 @@ int evaluatePostfix(char *postfix) {
                 case '/': result = a / b; break;
                 default:
                     printf("Invalid operator encountered.\n");
-                    printf("%c\n", ch);
                 exit(1);
             }
 
@@ -121,19 +121,19 @@ int evaluatePostfix(char *postfix) {
         }
     }
 
-    // 스택에 남은 최종 결과를 반환
     return pop(&s);
 }
 
-
 int main() {
+    int result;
     char infix[MAX];
     char postfix[MAX];
-    printf("중위표기식을 입력하세요: ");
+
+    printf("중위표기식을 입력하세요 : ");
     scanf("%s", infix);
 
-    infixToPostfix(infix, postfix);
-    printf("%s\n", postfix);
-    printf("후위표기식 계산 결과1: %d\n", evaluatePostfix(postfix));
+    result = infixToPostfix(infix, postfix);
+    printf("후위표기식 : %s\n", postfix);
+    printf("계산 결과 : %d\n", result);
     return 0;
 }

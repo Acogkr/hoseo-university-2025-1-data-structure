@@ -116,12 +116,10 @@ int evaluatePostfix(char *postfix) {
                 exit(1);
             }
 
-            // 연산 결과를 스택에 push
             push(&s, result);
         }
     }
 
-    // 스택에 남은 최종 결과를 반환
     return pop(&s);
 }
 
